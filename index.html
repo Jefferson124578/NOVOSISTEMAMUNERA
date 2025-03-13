@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Estoque Moderno</title>
+    <!-- Bootstrap CSS (para o layout responsivo e componentes) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome (para ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- SweetAlert2 (for better alerts) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Animate.css (for animations) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Poppins', sans-serif; /* Elegant, readable font */
+            background-color: #f4f8fb; /* Softer light background */
+            color: #333; /* Darker text */
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            background-color: #fff;
+            border-radius: 12px; /* Slightly less rounded */
+            padding: 30px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.09); /* Lighter, more diffused shadow */
+        }
+
+        h2, h3 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs .nav-link {
+            color: #555;
+            background-color: #fff;
+            border: none;
+            border-bottom: 2px solid transparent;
+            border-radius: 6px 6px 0 0;
+            margin-bottom: -2px;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link:hover {
+            background-color: #f9f9f9;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #fff;
+            background-color: #3498db; /* Vibrant blue */
+            border-bottom-color: #3498db;
+        }
+
+        /* Forms */
+        .form-control {
+            border: 1px solid #ddd;
+            border-radius: 8px; /* Softer curves */
+            padding: 12px 15px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 8px rgba(52, 152, 219, 0.25);
+        }
+
+        /* Buttons */
+        .btn {
+            border-radius: 8px; /* Consistent rounded corners */
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            border-color: #3498db;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+
+        .btn-success {
+            background-color: #2ecc71;
+            border-color: #2ecc71;
+            color: #fff;
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+            border-color: #27ae60;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+            border-color: #e74c3c;
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+            border-color: #c0392b;
+        }
+
+        .btn-outline-danger {
+            color: #e74c3c;
+            border-color: #e74c3c;
+        }
+
+        .btn-outline-danger:hover {
+            background-color: #e74c3c;
+            color: #fff;
+        }
+
+        .btn-secondary {
+             background-color: #7f8c8d;
+             border-color: #7f8c8d;
+             color: #fff; /* Ensure text is white */
+         }
+
+         .btn-secondary:hover {
+             background-color: #95a5a6; /* Darker gray on hover */
+             border-color: #95a5a6;
+         }
+
+        /* Table */
+        .table {
+            margin-top: 20px;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+        }
+
+        .table th {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            font-weight: 500;
+            padding: 14px 18px;
+        }
+
+        .table td {
+            border: none;
+            vertical-align: middle;
+            padding: 14px 18px;
+        }
+
+        .table tbody tr {
+            background-color: #fff;
+            box-shadow: 0 3px 9px rgba(0, 0, 0, 0.06);
+            border-radius: 10px;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .table tbody tr:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f8f9fa;
+        }
+
+        /* Table Actions */
+        .table .btn {
+            margin-right: 5px;
+            margin-bottom: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Badges */
+        .badge-warning {
+            background-color: #f1c40f;
+            color: #fff;
+            font-weight: 400;
+        }
+
+        /* SweetAlert2 Styling */
+        .swal2-popup {
+            font-size: 1rem;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .swal2-styled.swal2-confirm {
+            background-color: #3498db;
+        }
+
+        /* DataTable Styling */
+        .dataTables_wrapper .dataTables_filter input,
+        .dataTables_wrapper .dataTables_length select {
+            border-radius: 6px;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .dataTables_wrapper .dataTables_filter input:focus,
+        .dataTables_wrapper .dataTables_length select:focus {
+            box-shadow: 0 0 6px rgba(52, 152, 219, 0.2);
+            border-color: #3498db;
+        }
+
+        /* Scrollable Container */
+        .scrollable-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 20px;
+        }
+
+        /* Utility Classes */
+        .mt-4 {
+            margin-top: 24px;
+        }
+
+        /* Animation */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide-in-right {
+            animation: slideInRight 0.5s ease-in-out;
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #3498db;
+            color: white;
+            font-weight: 500;
+            border-radius: 10px 10px 0 0;
+            padding: 15px;
+            text-transform: uppercase;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+    </style>
+</head>
+<body class="slide-in-right">
+
+    <div class="container fade-in">
+        <h2><i class="fas fa-warehouse icon"></i> Controle de Estoque Moderno</h2>
+
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="estoque-tab" data-bs-toggle="tab" data-bs-target="#estoque" type="button" role="tab" aria-controls="estoque" aria-selected="true"><i class="fas fa-boxes icon"></i> Estoque</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="historico-tab" data-bs-toggle="tab" data-bs-target="#historico" type="button" role="tab" aria-controls="historico" aria-selected="false"><i class="fas fa-history icon"></i> Histórico</button>
+            </li>
+        </ul>
+
+        <div class="tab-content mt-4" id="myTabContent">
+            <!-- Estoque -->
+            <div class="tab-pane fade show active" id="estoque" role="tabpanel" aria-labelledby="estoque-tab">
+                <div class="card">
+                    <div class="card-header"><i class="fas fa-box-open icon"></i> Gerenciar Estoque</div>
+                    <div class="card-body">
+                         <div class="row">
+                             <div class="col-md-3">
+                                 <input type="text" class="form-control" id="productCode" placeholder="Código do Produto">
+                             </div>
+                             <div class="col-md-3">
+                                 <input type="text" class="form-control" id="itemName" placeholder="Nome do Item">
+                             </div>
+                             <div class="col-md-2">
+                                 <input type="number" class="form-control" id="itemQuantity" placeholder="Quantidade">
+                             </div>
+                              <div class="col-md-2">
+                                 <select class="form-select" id="responsiblePerson">
+                                     <option value="Jefferson Jesus">Jefferson Jesus</option>
+                                     <option value="Marcos Santana">Marcos Santana</option>
+                                 </select>
+                             </div>
+                             <div class="col-md-2">
+                                 <button class="btn btn-primary" onclick="addItem()"><i class="fas fa-plus icon"></i> Adicionar</button>
+                             </div>
+                         </div>
+                         <div class="row mt-3">
+                             <div class="col-md-12">
+                                 <input type="text" class="form-control" id="filterProduct" placeholder="Filtrar por nome" oninput="filterStock()">
+                             </div>
+                         </div>
+
+                         <div class="table-responsive scrollable-container mt-4">
+                             <table class="table table-striped table-hover" id="inventoryTable">
+                                 <thead>
+                                     <tr>
+                                         <th>Código</th>
+                                         <th>Nome</th>
+                                         <th>Quantidade</th>
+                                         <th>Ações</th>
+                                     </tr>
+                                 </thead>
+                                 <tbody id="inventoryBody">
+                                 </tbody>
+                             </table>
+                         </div>
+                         <button class="btn btn-secondary" onclick="exportCSV()">
+                            <i class="fas fa-file-export icon"></i> Exportar para CSV
+                         </button>
+                     </div>
+                 </div>
+            </div>
+
+            <!-- Histórico -->
+            <div class="tab-pane fade" id="historico" role="tabpanel" aria-labelledby="historico-tab">
+                <div class="card">
+                    <div class="card-header"><i class="fas fa-clipboard-list icon"></i> Histórico de Movimentações</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <select class="form-select" id="filterType" onchange="updateFilterPlaceholder()">
+                                    <option value="nome">Filtrar por Nome</option>
+                                    <option value="responsavel">Filtrar por Responsável</option>
+                                    <option value="data">Filtrar por Data</option>
+                                </select>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" id="filterValue" placeholder="Digite o valor" oninput="filterHistory()">
+                            </div>
+                        </div>
+
+                        <div class="table-responsive scrollable-container mt-4">
+                            <table class="table table-striped table-hover" id="historyTable">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Item</th>
+                                        <th>Tipo</th>
+                                        <th>Quantidade</th>
+                                        <th>Responsável</th>
+                                        <th>Data</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper (required for some Bootstrap features) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables JavaScript -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        let inventory = JSON.parse(localStorage.getItem("inventory")) || {};
+        let history = JSON.parse(localStorage.getItem("history")) || [];
+
+        $(document).ready(function () {
+            $('#inventoryTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json"
+                },
+                "columnDefs": [
+                    { "width": "10%", "targets": 0 },
+                    { "width": "20%", "targets": 1 },
+                    { "width": "15%", "targets": 2 },
+                    { "width": "30%", "targets": 3 } //Adjust the actions size
+                ]
+            });
+            $('#historyTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json"
+                }
+            });
+        });
+        function exportCSV() {
+            const inventoryData = Object.values(inventory).map(item => ({
+                Código: item.code,
+                Nome: item.name,
+                Quantidade: item.quantity
+            }));
+
+            const header = ['Código', 'Nome', 'Quantidade'];
+            const rows = inventoryData.map(item => [item.Código, item.Nome, item.Quantidade]);
+
+            let csvContent = "data:text/csv;charset=utf-8," + header.join(",") + "\n";
+            rows.forEach(row => {
+                csvContent += row.join(",") + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "estoque.csv");
+            link.click();
+        }
+
+        function addItem() {
+            const code = document.getElementById("productCode").value;
+            const name = document.getElementById("itemName").value;
+            const quantity = parseInt(document.getElementById("itemQuantity").value);
+            const responsible = document.getElementById("responsiblePerson").value;
+
+            if (!code || !name || !quantity || !responsible) {
+                showSweetAlert('Por favor, preencha todos os campos!', 'error');
+                return;
+            }
+
+            if (isNaN(quantity) || quantity <= 0) { // Check if quantity is a valid number
+                showSweetAlert('A quantidade deve ser um número maior que zero!', 'error');
+                return;
+            }
+
+            // Verifica se o produto já existe pelo código ou nome (case-insensitive)
+            const codeExists = inventory[code] !== undefined;
+            const nameExists = Object.values(inventory).some(item => item.name.toLowerCase() === name.toLowerCase());
+
+            if (codeExists || nameExists) {
+                showSweetAlert('Produto já cadastrado com o mesmo código ou nome!', 'error');
+                return;
+            }
+
+            // Adiciona o produto ao estoque
+            inventory[code] = { name, quantity, responsible }; // Store the responsible
+            addHistory(code, name, "Entrada", quantity, responsible);
+            saveData();
+            updateTable();
+            clearInputFields();
+            showSweetAlert('Produto cadastrado com sucesso!', 'success');
+            // Redraw DataTable
+            $('#inventoryTable').DataTable().draw();
+        }
+
+        function addHistory(code, name, type, quantity, responsible) {
+            const date = new Date().toISOString(); // Armazena a data em formato ISO
+            history.push({ code, name, type, quantity, responsible, date });
+            saveData();
+            updateHistoryTable();
+            // Redraw DataTable
+            $('#historyTable').DataTable().draw();
+        }
+
+        function saveData() {
+            localStorage.setItem("inventory", JSON.stringify(inventory));
+            localStorage.setItem("history", JSON.stringify(history));
+        }
+
+        function updateTable() {
+            const inventoryBody = document.getElementById("inventoryBody");
+            inventoryBody.innerHTML = "";
+
+            for (const code in inventory) {
+                if (inventory.hasOwnProperty(code)) {
+                    const item = inventory[code];
+                    const row = document.createElement("tr");
+
+                    let quantityDisplay = item.quantity.toString(); // Start with the quantity as a string
+
+                    if (item.quantity < 20) {
+                        quantityDisplay += ' <span class="badge bg-warning text-dark">Baixo Estoque</span>';  // Append badge HTML
+                         // Show low stock alert
+                        //showSweetAlert(`Estoque baixo para o item: ${item.name}`, 'warning');
+                    }
+
+                    row.innerHTML = `
+                        <td>${code}</td>
+                        <td>${item.name}</td>
+                        <td>${quantityDisplay}</td>  <!-- Display quantity with badge -->
+                        <td>
+                            <button class="btn btn-success btn-sm" onclick="updateQuantity('${code}', 'Entrada')"><i class="fas fa-plus icon"></i> Entrada</button>
+                            <button class="btn btn-danger btn-sm" onclick="updateQuantity('${code}', 'Saída')"><i class="fas fa-minus icon"></i> Saída</button>
+                            <button class="btn btn-outline-danger btn-sm" onclick="deleteItem('${code}')"><i class="fas fa-trash icon"></i> Excluir</button>
+                        </td>
+                    `;
+
+                    inventoryBody.appendChild(row);
+                }
+            }
+        }
+
+        function deleteItem(code) {
+            const itemName = inventory[code].name;
+            Swal.fire({
+                title: `Tem certeza que deseja excluir "${itemName}"?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sim, excluir!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    delete inventory[code];
+                    addHistory(code, itemName, "Exclusão", 0, "Usuário");
+                    saveData();
+                    updateTable();
+                    showSweetAlert(`${itemName} foi excluído do estoque!`, 'success');
+                     // Redraw DataTable
+                    $('#inventoryTable').DataTable().draw();
+                }
+            })
+        }
+
+        function updateQuantity(code, type) {
+            const itemName = inventory[code].name;
+            Swal.fire({
+                title: `Digite a quantidade de ${type.toLowerCase()} para o item ${itemName}:`,
+                input: 'number',
+                showCancelButton: true,
+                confirmButtonText: 'Confirmar',
+                cancelButtonText: 'Cancelar',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const quantity = parseInt(result.value);
+
+                    if (isNaN(quantity) || quantity <= 0) {
+                        showSweetAlert("A quantidade deve ser um número maior que zero.", 'error');
+                        return;
+                    }
+
+                    if (type === "Saída" && inventory[code].quantity < quantity) {
+                        showSweetAlert("Quantidade insuficiente em estoque.", 'error');
+                        return;
+                    }
+
+                    inventory[code].quantity += (type === "Entrada" ? quantity : -quantity);
+                    const responsible = "Usuário";
+                    addHistory(code, itemName, type, quantity, responsible);
+                    saveData();
+                    updateTable();
+                    showSweetAlert(`Quantidade de ${itemName} atualizada com sucesso!`, 'success');
+                     // Redraw DataTable
+                    $('#inventoryTable').DataTable().draw();
+                }
+            });
+        }
+
+        function updateHistoryTable() {
+            const historyBody = document.getElementById("historyBody");
+            historyBody.innerHTML = "";
+            for (const item of history) {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${item.code}</td>
+                    <td>${item.name}</td>
+                    <td>${item.type}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.responsible}</td>
+                    <td>${new Date(item.date).toLocaleString()}</td>
+                `;
+                historyBody.appendChild(row);
+            }
+        }
+
+        function filterHistory() {
+            const filterType = document.getElementById("filterType").value;
+            const filterValue = document.getElementById("filterValue").value.toLowerCase();
+            const historyBody = document.getElementById("historyBody");
+            historyBody.innerHTML = "";
+
+            history.forEach(item => {
+                let matches = false;
+
+                if (filterType === "nome") {
+                    matches = item.name.toLowerCase().includes(filterValue);
+                } else if (filterType === "responsavel") {
+                    matches = item.responsible.toLowerCase().includes(filterValue);
+                } else if (filterType === "data") {
+                    const itemDate = new Date(item.date).toLocaleDateString();
+                    matches = itemDate.includes(filterValue);
+                }
+
+                if (matches) {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${item.code}</td>
+                        <td>${item.name}</td>
+                        <td>${item.type}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.responsible}</td>
+                        <td>${new Date(item.date).toLocaleString()}</td>
+                    `;
+                    historyBody.appendChild(row);
+                }
+            });
+
+            // Se nenhum resultado for encontrado
+            if (historyBody.innerHTML === "") {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td colspan="6" style="text-align:center;">Nenhum registro encontrado.</td>`;
+                historyBody.appendChild(row);
+            }
+        }
+
+        function showSweetAlert(message, icon) {
+            Swal.fire({
+                title: message,
+                icon: icon,
+                timer: 2000,
+                showConfirmButton: false,
+                animation: true, /* Enable animations */
+                customClass: {
+                    popup: 'animated zoomIn' /* Add animation class */
+                }
+            });
+        }
+
+        function updateFilterPlaceholder() {
+            const filterType = document.getElementById("filterType").value;
+            const filterValue = document.getElementById("filterValue");
+            if (filterType === "data") {
+                filterValue.type = "date";
+                filterValue.placeholder = "Selecione uma data";
+            } else {
+                filterValue.type = "text";
+                filterValue.placeholder = "Digite o valor";
+            }
+        }
+
+         function clearInputFields() {
+            document.getElementById("productCode").value = "";
+            document.getElementById("itemName").value = "";
+            document.getElementById("itemQuantity").value = "";
+            document.getElementById("responsiblePerson").value = "Jefferson Jesus"; // Reset select
+        }
+
+        updateTable();
+        updateHistoryTable();
+    </script>
+</body>
+</htm
+
+
+
+
+
+
+
+
